@@ -8,7 +8,12 @@ let title = document.getElementById("title");
 let price = document.getElementById("price");
 let description = document.getElementById("description");
 let colorList = document.getElementById("colors");
+let cartButton = document.getElementById("addToCart");
 let productID ="";
+let cartItems = [];
+let userColor;
+let itemQuantity = document.getElementById("quantity");
+let userQuantity;
 
 //Adding event listener to execute function as page is loaded
 document.addEventListener("DOMContentLoaded", () => {
@@ -54,3 +59,50 @@ document.addEventListener("DOMContentLoaded", () => {
 getProductID();
 getProductInfo();
 });
+
+/*
+ * The user chooses the color and quantity of the product
+ * The user's choices are saved. Add event listeners to input for color and quantity to save it
+ * The user clicks add to cart button id = addToCart and the product info, color and quantity are added to a cart array
+ * The cart array is saved in local storage
+ */
+
+// Saving color input from the color menu
+colorList.addEventListener("change", ($event) => {
+    userColor = $event.target.value;
+});
+
+//Saving quantity input
+itemQuantity.addEventListener("change", ($event) => {
+    userQuantity = $event.target.value;
+});
+
+//Adding event listener to button. Single product should be on one line.
+cartButton.addEventListener("click", () => {
+    let newCustomerInput = {
+        /*product id, color, quantity*/
+        productColor : userColor,
+        quantity : userQuantity,
+        ID : productID
+    };
+    cartItems.push(newCustomerInput);
+
+/*Before I can add a cartItem to the userCart, I need to see if:
+*there is a userCart in local storage already
+*the new cartItem I am trying to add is already in the cart (same product and color)
+*if yes to above then I just increase quantity of that cartItem in storage
+*if no then add new item
+*/
+
+//checking to see if there is already a userCart in local storage and if not set the item
+    if (localStorage.getItem("userCart") === null) {
+        localStorage.setItem("userCart", JSON.stringify(cartItems));
+    } 
+//if userCart already exists, retrieve the info and add new info   
+    else  {
+       let currentCart = JSON.parse(localStorage.getItem("userCart"));
+       currentCart.push(newCustomerInput);
+       localStorage.setItem("userCart", JSON.stringify(currentCart));
+    }
+});
+
