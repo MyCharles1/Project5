@@ -95,14 +95,25 @@ cartButton.addEventListener("click", () => {
 */
 
 //checking to see if there is already a userCart in local storage and if not set the item
-    if (localStorage.getItem("userCart") === null) {
-        localStorage.setItem("userCart", JSON.stringify(cartItems));
+let isCartEmpty = localStorage.getItem("usersCart") === null;
+let currentCart = JSON.parse(localStorage.getItem("usersCart"));
+    if (isCartEmpty) {
+        localStorage.setItem("usersCart", JSON.stringify(cartItems));
     } 
-//if userCart already exists, retrieve the info and add new info   
+//if userCart already exists, retrieve the info and add new info
+//Loop through the currentCart, if ID and productColor are the same then add new quantity to current quantity 
     else  {
-       let currentCart = JSON.parse(localStorage.getItem("userCart"));
-       currentCart.push(newCustomerInput);
-       localStorage.setItem("userCart", JSON.stringify(currentCart));
+       for (let item of currentCart) {
+           if ((item.ID == newCustomerInput.ID) && (item.productColor == newCustomerInput.productColor)) {
+               //TODO fix eg 1+2=12 and not 3 (cast string to number) (change string to no. javascript)
+               item.quantity = (parseInt(item.quantity) + parseInt(newCustomerInput.quantity));
+               localStorage.setItem("usersCart", JSON.stringify(currentCart));
+           }
+           else {
+            let newCart = currentCart.push(newCustomerInput);
+            localStorage.setItem("usersCart", JSON.stringify(newCart));
+           }
+       }
     }
 });
 
